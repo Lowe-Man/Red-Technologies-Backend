@@ -20,10 +20,6 @@ namespace API.Data
                 .ToTable("order")
                 .Property(e => e.OrderType)
                 .HasConversion<int>();
-                //            .HasConversion(
-                //    v => v.ToString(),
-                //    v => (OrderType)Enum.Parse(typeof(OrderType), v)
-                //);
         }
     }
 }

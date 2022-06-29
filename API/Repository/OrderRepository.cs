@@ -26,8 +26,9 @@ namespace API.Repository
 
         public async Task Delete(int id)
         {
-            var book = await _context.Orders.FindAsync(id);
-            _context.Orders.Remove(book);
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return;
+            _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
 
         }
