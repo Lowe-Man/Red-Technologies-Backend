@@ -20,6 +20,11 @@ namespace API.Data
                 .ToTable("order")
                 .Property(e => e.OrderType)
                 .HasConversion<int>();
+
+            modelBuilder.Entity<User>()
+                .ToTable("user");
         }
+
+        public DbSet<API.Models.User> User { get; set; }
     }
 }

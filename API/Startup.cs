@@ -1,14 +1,17 @@
 using API.Data;
 using API.Models;
 using API.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace API
@@ -27,12 +30,31 @@ namespace API
         {
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddControllers()
-                .AddJsonOptions(opt =>
+            services.AddControllers(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+
+            })
+                .AddJsonOptions(options =>
                     {
-                        opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                     }
                 );
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["JWT:Issuer"],
+                        ValidAudience = Configuration["JWT:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))
+                    };
+                });
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -76,6 +98,8 @@ namespace API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
