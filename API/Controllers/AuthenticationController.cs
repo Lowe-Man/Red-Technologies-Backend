@@ -46,25 +46,24 @@ namespace API.Controllers
 
         private TokenResponse Generate(User user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                new Claim(ClaimTypes.NameIdentifier, user.FullName),
-                new Claim(ClaimTypes.Email, user.Email),
+                Subject = new ClaimsIdentity(new[]{
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(15),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var token = new JwtSecurityToken(_configuration["JWT:Issuer"],
-                _configuration["JWT:Audience"], claims,
-                expires: DateTime.Now.AddMinutes(15),
-                signingCredentials: credentials);
-            var writeToken = new JwtSecurityTokenHandler().WriteToken(token);
-            var tokenResponse = new TokenResponse
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return new TokenResponse
             {
-                token = writeToken,
+                token = tokenHandler.WriteToken(token)
             };
-            return tokenResponse;
         }
 
         private User Verify(UserAuthenticate userAuth)
