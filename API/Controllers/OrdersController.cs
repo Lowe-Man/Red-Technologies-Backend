@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Enums;
 using API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,6 +27,7 @@ namespace API.Controllers
         /// Gets all orders
         /// </summary>
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
             return await _context.Orders.ToListAsync();
@@ -50,6 +52,7 @@ namespace API.Controllers
         /// <response code="404">Returns 404 if </response>
         // GET: api/orders/customer/ordertype
         [HttpGet("{customer}/{ordertype}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Order>>> SearchOrders(string customer, string ordertype)
         {
             OrderType orderint = (OrderType)Enum.Parse(typeof(OrderType), ordertype, true);
@@ -68,6 +71,7 @@ namespace API.Controllers
 
         // GET: api/orders/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -84,6 +88,7 @@ namespace API.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.Id)
@@ -131,6 +136,7 @@ namespace API.Controllers
         /// <response code="201">Returns the newly created item</response>
         /// <response code="400">If the item is null</response>
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
             _context.Orders.Add(order);
@@ -141,6 +147,7 @@ namespace API.Controllers
 
         // DELETE: api/orders/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<Order>> DeleteOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);
