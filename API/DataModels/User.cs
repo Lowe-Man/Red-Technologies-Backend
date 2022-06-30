@@ -1,5 +1,4 @@
-﻿using API.Enums;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,7 +13,8 @@ namespace API.Models
         [Required]
         public string FullName { get; set; }
         [Required]
-        public string PasswordHash { get; set; }
+        [Column("PasswordHash")]
+        public string Password { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 }

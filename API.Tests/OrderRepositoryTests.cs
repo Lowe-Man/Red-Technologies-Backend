@@ -2,14 +2,8 @@
 using API.Enums;
 using API.Models;
 using API.Repository;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace API.Tests
 {
@@ -20,7 +14,7 @@ namespace API.Tests
         private DbContextOptions<ApplicationDbContext> _options;
         private Order order;
 
-        
+
         public OrderRepositoryTests()
         {
             var builder = new ConfigurationBuilder()

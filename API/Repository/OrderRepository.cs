@@ -1,10 +1,9 @@
 ﻿using API.Data;
 using API.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Repository
 {
@@ -20,8 +19,8 @@ namespace API.Repository
         public async Task<Order> Create(Order order)
         {
             _context.Orders.Add(order);
-           await _context.SaveChangesAsync();
-           return order;
+            await _context.SaveChangesAsync();
+            return order;
         }
 
         public async Task Delete(int id)
@@ -35,7 +34,7 @@ namespace API.Repository
 
         public async Task<IEnumerable<Order>> Get()
         {
-            return await _context.Orders.ToListAsync(); 
+            return await _context.Orders.ToListAsync();
         }
 
         public async Task<Order> Get(int id)

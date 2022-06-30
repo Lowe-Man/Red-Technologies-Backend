@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using API.Data;
+﻿using API.Data;
+using API.DataModels;
 using API.Models;
 using Microsoft.AspNetCore.Authorization;
-using BC = BCrypt.Net.BCrypt;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
-using API.DataModels;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using BC = BCrypt.Net.BCrypt;
 
 namespace API.Controllers
 {
     [Route("api/authenticate")]
-    [Produces("application/json")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -46,7 +40,7 @@ namespace API.Controllers
 
         private TokenResponse Generate(User user)
         {
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var key = Encoding.ASCII.GetBytes(_configuration["JWT:Key"]);
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -70,14 +64,9 @@ namespace API.Controllers
         {
             var currentUser = _context.User.FirstOrDefault(u => u.Email.ToLower() == userAuth.Email.ToLower());
             if (currentUser == null) return null;
-            if (BC.Verify(userAuth.Password, currentUser?.PasswordHash)) return currentUser;
+            if (BC.Verify(userAuth.Password, currentUser?.Password)) return currentUser;
             return null;
 
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.User.Any(e => e.Id == id);
         }
     }
 }
