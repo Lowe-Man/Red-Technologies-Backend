@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using API.Data;
 using API.Models;
 using BC = BCrypt.Net.BCrypt;
-
+using Microsoft.AspNetCore.Authorization;
+using API.DataModels;
 
 namespace API.Controllers
 {
@@ -23,16 +24,28 @@ namespace API.Controllers
             _context = context;
         }
 
+        // POST: api/users
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        [AllowAnonymous]
+        public async Task<ActionResult<GenericMessageResponse>> PostUser(User user)
         {
-            string passwordHash = BC.HashPassword(user.Password);
-            user.Password = passwordHash;
-            if (_context.User.FirstOrDefault(u => u.Email == user.Email) != null) return Conflict("User already exists");
+            if (_context.User.FirstOrDefault(u => u.Email == user.Email) != null) return Conflict(new GenericMessageResponse { message = "User already exists" });
+            user.Password = BC.HashPassword(user.Password);
             _context.User.Add(user);
             await _context.SaveChangesAsync();
+            var message = new GenericMessageResponse
+            {
+                message = "User created"
+            };
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return Created("/api/user" + user.Id, message);
+        }
+
+        private bool UserExists(int id)
+        {
+            return _context.User.Any(e => e.Id == id);
         }
     }
 }

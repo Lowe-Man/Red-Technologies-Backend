@@ -20,7 +20,9 @@ namespace API.Data
                 .HasConversion<int>();
 
             modelBuilder.Entity<User>()
-                .ToTable("user");
+                .ToTable("user")
+                .Property(u => u.CreatedDate)
+                .HasDefaultValueSql("getdate()");
         }
 
         public DbSet<API.Models.User> User { get; set; }
