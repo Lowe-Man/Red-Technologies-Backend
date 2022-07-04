@@ -110,8 +110,6 @@ namespace API
                 options.RoutePrefix = string.Empty;
             });
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthentication();
