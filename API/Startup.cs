@@ -35,8 +35,8 @@ namespace API
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   policy =>
                                   {
-                                      policy.WithOrigins("https://localhost:5001",
-                                                          "http://localhost:3000")
+                                      policy.WithOrigins("http://108.235.200.16:10001",
+                                                          "http://108.235.200.16:10002")
                                                             .AllowAnyHeader()
                                                             .AllowAnyMethod();
                                   });
