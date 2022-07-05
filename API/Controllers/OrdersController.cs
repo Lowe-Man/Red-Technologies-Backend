@@ -17,6 +17,7 @@ namespace API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private List<Order> orders;
 
         public OrdersController(ApplicationDbContext context)
         {
@@ -57,9 +58,17 @@ namespace API.Controllers
         {
             OrderType orderint = (OrderType)Enum.Parse(typeof(OrderType), ordertype, true);
             customer = customer.ToLower();
-            var orders = await _context.Orders
-                .Where(order => order.CustomerName.Contains(customer) && order.OrderType == orderint
-            ).ToListAsync();
+
+            if (customer == "null")
+            {
+                orders = await _context.Orders.Where(order => order.OrderType == orderint).ToListAsync();
+            } else if (ordertype == "null")
+            {
+                orders = await _context.Orders.Where(order => order.CustomerName.Contains(customer)).ToListAsync();
+            } else
+            {
+                orders = await _context.Orders.Where(order => order.CustomerName.Contains(customer) && order.OrderType == orderint).ToListAsync();
+            }
 
             if (orders == null)
             {
