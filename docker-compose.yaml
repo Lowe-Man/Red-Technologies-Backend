@@ -14,11 +14,17 @@ services:
     image: alexlowe64/red-backend-migration:latest
     depends_on:
       - "mssql"
-  app:
+  api:
     image: alexlowe64/red-backend:latest
     depends_on:
       - "migration"
     ports:
-      - 10000:80
+      - 10001:80
+  frontend:
+    image: alexlowe64/red-frontend:latest
+    depends_on:
+      - "api"
+    ports:
+      - 10002:80
 volumes:
   mssql-data:
