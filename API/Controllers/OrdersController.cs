@@ -57,22 +57,23 @@ namespace API.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<Order>>> SearchOrders(string customer, string ordertype)
         {
-            if (ordertype != "null")
+            if (ordertype != "nul")
             {
                 OrderType orderint = (OrderType)Enum.Parse(typeof(OrderType), ordertype, true);
             }
 
             customer = customer.ToLower();
 
-            if (ordertype != "null")
+            if (ordertype != "nul")
             {
                 orders = await _context.Orders.Where(order => order.OrderType == orderint).ToListAsync();
-            } else if (customer != "null")
+            } else if (customer != "nul")
             {
                 orders = await _context.Orders.Where(order => order.CustomerName.Contains(customer)).ToListAsync();
-            } else
+            }
+             else
             {
-                orders = await _context.Orders.Where(order => order.CustomerName.Contains(customer) && order.OrderType == orderint).ToListAsync();
+                orders = await _context.Orders.ToListAsync();
             }
 
             if (orders == null)
