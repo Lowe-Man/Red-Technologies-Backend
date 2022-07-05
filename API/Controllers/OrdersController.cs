@@ -18,6 +18,7 @@ namespace API.Controllers
     {
         private readonly ApplicationDbContext _context;
         private List<Order> orders;
+        private OrderType orderint;
 
         public OrdersController(ApplicationDbContext context)
         {
@@ -56,13 +57,17 @@ namespace API.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<Order>>> SearchOrders(string customer, string ordertype)
         {
-            OrderType orderint = (OrderType)Enum.Parse(typeof(OrderType), ordertype, true);
+            if (ordertype != "null")
+            {
+                OrderType orderint = (OrderType)Enum.Parse(typeof(OrderType), ordertype, true);
+            }
+
             customer = customer.ToLower();
 
-            if (customer == "null")
+            if (ordertype != "null")
             {
                 orders = await _context.Orders.Where(order => order.OrderType == orderint).ToListAsync();
-            } else if (ordertype == "null")
+            } else if (customer != "null")
             {
                 orders = await _context.Orders.Where(order => order.CustomerName.Contains(customer)).ToListAsync();
             } else
